@@ -2,19 +2,17 @@ import Vapor
 
 /// Register your application's routes here.
 public func routes(_ router: Router) throws {
-    // Basic "It works" example
-    router.get { req in
-        return "It works!"
+    router.post("api", "add_pc_entry") { req -> Future<ServerResponse> in
+       return try req.content
+        .decode([PCSetupEntry].self)
+        .flatMap(to: [PCSetupEntry].self) { (setups: [PCSetupEntry]) -> Future<[PCSetupEntry]> in
+            return setups.save(on: req)
+        }
+       .transform(to: ServerResponse.defaultSuccess)
     }
     
-    // Basic "Hello, world!" example
-    router.get("hello") { req in
-        return "Hello, world!"
+    router.get("api", "get_pc_entries") { req -> Future<[PCSetupEntry]> in
+        return PCSetupEntry.query(on: req).all()
     }
-
-    // Example of configuring a controller
-    let todoController = TodoController()
-    router.get("todos", use: todoController.index)
-    router.post("todos", use: todoController.create)
-    router.delete("todos", Todo.parameter, use: todoController.delete)
+    
 }

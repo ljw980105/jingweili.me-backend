@@ -1,0 +1,19 @@
+//
+//  Array+FluentSave.swift
+//  App
+//
+//  Created by Jing Wei Li on 5/15/20.
+//
+
+import Foundation
+import Vapor
+import FluentSQLite
+
+extension Array where Element: Model {
+    /// Saves an array of elements to the database.
+    func save(on request: Request) -> Future<[Element]> {
+        return self
+            .map { $0.save(on: request) }
+            .flatten(on: request)
+    }
+}

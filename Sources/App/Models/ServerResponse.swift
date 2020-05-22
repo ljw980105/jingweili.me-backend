@@ -1,0 +1,18 @@
+//
+//  ServerResponse.swift
+//  App
+//
+//  Created by Jing Wei Li on 5/15/20.
+//
+
+import Foundation
+import Vapor
+
+struct ServerResponse: Content {
+    let success: Bool
+    let message: String
+    
+    static let defaultSuccess: ServerResponse = {
+       return ServerResponse(success: true, message: "success")
+    }()
+}
