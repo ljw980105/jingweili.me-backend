@@ -13,6 +13,10 @@ struct ServerResponse: Content {
     let message: String
     
     static let defaultSuccess: ServerResponse = {
-       return ServerResponse(success: true, message: "success")
+        return ServerResponse(success: true, message: "success")
     }()
+    
+    static func errorFrom(_ error: Error) -> ServerResponse {
+        return ServerResponse(success: false, message: error.localizedDescription)
+    }
 }

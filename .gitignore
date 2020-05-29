@@ -7,3 +7,5 @@ DerivedData/
 .swiftpm
 db.sqlite
 .circleci
+
+*.pdf
