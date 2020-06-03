@@ -9,3 +9,6 @@ db.sqlite
 .circleci
 
 *.pdf
+*.jpg
+*.png
+*.jpeg

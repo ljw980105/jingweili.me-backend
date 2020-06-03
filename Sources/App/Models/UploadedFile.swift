@@ -10,4 +10,5 @@ import Vapor
 
 struct UploadedFile: Content {
     let file: Data
+    let name: String
 }

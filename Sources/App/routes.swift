@@ -36,4 +36,26 @@ public func routes(_ router: Router) throws {
         return req.future(FileLocation(exists: exists, url: exists ? FileType.resume.rawValue : ""))
     }
     
+    // MARK: - Graphic Design Endpoints
+    router.get("api", "get-graphic-projects") { req -> Future<[GraphicProject]> in
+        return GraphicProject.query(on: req).all()
+    }
+    
+    router.post("api", "add-graphic-project") { req -> Future<ServerResponse> in
+        return try req.content
+            .decode(GraphicProject.self)
+            .flatMap(to: GraphicProject.self) { $0.save(on: req) }
+            .transform(to: ServerResponse.defaultSuccess)
+    }
+    
+    router.delete("api", "delete-graphic-project", GraphicProject.parameter) { req -> Future<ServerResponse> in
+        return try req.parameters.next(GraphicProject.self)
+            .delete(on: req)
+            .transform(to: ServerResponse.defaultSuccess)
+    }
+    
+    // MARK: - File Upload
+    router.post("api", "upload-file") { req -> Future<ServerResponse> in
+        return try saveWithOriginalFilename(on: req)
+    }
 }
