@@ -1,4 +1,5 @@
 import Vapor
+import JWT
 
 /// Register your application's routes here.
 public func routes(_ router: Router) throws {
@@ -19,10 +20,12 @@ public func routes(_ router: Router) throws {
     
     // MARK: - CV + Resumes
     router.post("api", "upload-resume") { (req: Request) -> Future<ServerResponse> in
+        try req.authenticate()
         return try req.saveFileTyped(.resume)
     }
     
     router.post("api", "upload-cv") { (req: Request) -> Future<ServerResponse> in
+        try req.authenticate()
         return try req.saveFileTyped(.cv)
     }
     
@@ -42,6 +45,7 @@ public func routes(_ router: Router) throws {
     }
     
     router.post("api", "add-graphic-project") { req -> Future<ServerResponse> in
+        try req.authenticate()
         return try req.content
             .decode(GraphicProject.self)
             .flatMap(to: GraphicProject.self) { $0.save(on: req) }
@@ -49,6 +53,7 @@ public func routes(_ router: Router) throws {
     }
     
     router.delete("api", "delete-graphic-project", GraphicProject.parameter) { req -> Future<ServerResponse> in
+        try req.authenticate()
         return try req.parameters.next(GraphicProject.self)
             .delete(on: req)
             .transform(to: ServerResponse.defaultSuccess)
@@ -56,6 +61,31 @@ public func routes(_ router: Router) throws {
     
     // MARK: - File Upload
     router.post("api", "upload-file") { req -> Future<ServerResponse> in
+        try req.authenticate()
         return try saveWithOriginalFilename(on: req)
+    }
+    
+    // MARK: - Login / Logout
+    router.post("api", "login") { req -> Future<Token> in
+        return try req.content
+            .decode(Password.self)
+            .flatMap { passwordObj -> Future<Token> in
+                let password = try readStringFromFile(named: "password", isPublic: false).base64Decoded()
+                guard password == passwordObj.password else {
+                    throw Abort(.unauthorized)
+                }
+                let key = try readStringFromFile(named: "jwtKey.key", isPublic: false)
+                let jwt = try JWT(payload: JWTToken()).sign(using: .hs256(key: key))
+                guard let string = String(data: jwt, encoding: .utf8) else {
+                    throw NSError(domain: "Unknown", code: 0)
+                }
+                try string.saveToFileNamed("currentToken", isPublic: false)
+                return req.future(Token(token: string))
+            }
+    }
+    
+    router.get("api", "logout") { req -> Future<ServerResponse> in
+        try deleteFileNamed("currentToken", isPublic: false)
+        return req.future(ServerResponse.defaultSuccess)
     }
 }

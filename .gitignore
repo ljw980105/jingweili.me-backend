@@ -12,3 +12,6 @@ db.sqlite
 *.jpg
 *.png
 *.jpeg
+password
+jwtKey.key
+currentToken
