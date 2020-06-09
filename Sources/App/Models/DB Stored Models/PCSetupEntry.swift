@@ -33,4 +33,6 @@ extension PCSetupEntry: Content {}
 
 extension PCSetupEntry: Migration {}
 
+extension PCSetupEntry: Parameter {}
+
 

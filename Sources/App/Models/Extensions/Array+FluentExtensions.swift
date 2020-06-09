@@ -16,4 +16,10 @@ extension Array where Element: Model {
             .map { $0.save(on: request) }
             .flatten(on: request)
     }
+    
+    func delete(on request: Request) -> Future<Void> {
+        return self
+            .map { $0.delete(on: request) }
+            .flatten(on: request)
+    }
 }
