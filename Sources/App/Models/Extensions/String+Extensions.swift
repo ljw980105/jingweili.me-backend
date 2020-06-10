@@ -20,9 +20,13 @@ extension String {
     }
     
     func saveToFileNamed(_ name: String, isPublic: Bool) throws {
-        guard let url = URL(string: "file://" + DirectoryConfig.detect().workDir)?.appendingPathComponent("\(isPublic ? "Public/" : "")\(name)") else {
-            throw NSError(domain: "Unable to get pwd", code: 0)
-        }
+        let url = URL(fileURLWithPath: DirectoryConfig.detect().workDir)
+            .appendingPathComponent("\(isPublic ? "Public/" : "")\(name)")
         try self.write(to: url, atomically: true, encoding: .utf8)
+    }
+
+    init(randomWithLength length: Int) {
+        let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        self = String((0..<length).compactMap { _ in letters.randomElement() })
     }
 }

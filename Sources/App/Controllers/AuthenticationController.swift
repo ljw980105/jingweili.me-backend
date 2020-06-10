@@ -8,18 +8,18 @@
 import Foundation
 import Vapor
 import Fluent
-import JWT
 
 
 /// - Authentication Workflow:
 /// 1. User logs in in by providing the password
 /// 2. Server reads the password from a local file and compares it with the password from the request
-/// 3. If the comparison succeeds, the server responds with a jwt token and saves it locally in a file `currentToken`
+/// 3. If the comparison succeeds, the server responds with a session id as token and saves it locally in a file `currentToken`
 /// 4. Any restricted resources on the server must be accessed by providing the jwt token in the http header:
 ///```
 /// Authorization: Bearer <jwt-token>
 ///```
 /// 5. When the user logs out, the locally stored `currentToken` is deleted
+/// * Note: This is not using JWTs because they do not support manual logout by invalidating a token
 struct AuthenticationController: RouteCollection {
     func boot(router: Router) throws {
         // MARK: - Login / Logout
@@ -31,13 +31,9 @@ struct AuthenticationController: RouteCollection {
                     guard password == passwordObj.password else {
                         throw Abort(.unauthorized)
                     }
-                    let key = try readStringFromFile(named: "jwtKey.key", isPublic: false)
-                    let jwt = try JWT(payload: JWTToken()).sign(using: .hs256(key: key))
-                    guard let string = String(data: jwt, encoding: .utf8) else {
-                        throw NSError(domain: "Unknown", code: 0)
-                    }
-                    try string.saveToFileNamed("currentToken", isPublic: false)
-                    return req.future(Token(token: string))
+                    let token = String(randomWithLength: 20)
+                    try token.saveToFileNamed("currentToken", isPublic: false)
+                    return req.future(Token(token: token))
                 }
         }
         
