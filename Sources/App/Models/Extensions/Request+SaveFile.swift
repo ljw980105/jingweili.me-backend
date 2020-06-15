@@ -50,9 +50,7 @@ private func saveFile(on req: Request, pathType: PathType) throws -> Future<Serv
         .decode(UploadedFile.self)
         .flatMap { file -> Future<ServerResponse> in
             let pathComponent = pathType.pathComponentFor(file)
-            guard let url = URL(string: "file://" + DirectoryConfig.detect().workDir)?.appendingPathComponent(pathComponent) else {
-                throw NSError(domain: "Unable to get pwd", code: 0)
-            }
+            let url = pwd().appendingPathComponent(pathComponent)
             try file.file.write(to: url)
             return req.future(ServerResponse.defaultSuccess)
     }

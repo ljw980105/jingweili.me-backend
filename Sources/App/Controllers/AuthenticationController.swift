@@ -11,12 +11,12 @@ import Fluent
 
 
 /// - Authentication Workflow:
-/// 1. User logs in in by providing the password
+/// 1. User logs in by providing the password
 /// 2. Server reads the password from a local file and compares it with the password from the request
 /// 3. If the comparison succeeds, the server responds with a session id as token and saves it locally in a file `currentToken`
-/// 4. Any restricted resources on the server must be accessed by providing the jwt token in the http header:
+/// 4. Any restricted resources on the server must be accessed by providing the session token in the http header:
 ///```
-/// Authorization: Bearer <jwt-token>
+/// Authorization: Bearer <session-id>
 ///```
 /// 5. When the user logs out, the locally stored `currentToken` is deleted
 /// * Note: This is not using JWTs because they do not support manual logout by invalidating a token

@@ -12,7 +12,7 @@ db.sqlite
 *.jpg
 *.png
 *.jpeg
+*.gif
 password
-jwtKey.key
 currentToken
 output.log
