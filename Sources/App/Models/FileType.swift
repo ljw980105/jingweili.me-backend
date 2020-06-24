@@ -14,6 +14,6 @@ enum FileType: String {
     
     func fileExists() -> Bool {
         let pwd = DirectoryConfig.detect().workDir
-        return FileManager.default.fileExists(atPath: "\(pwd)Public/\(rawValue)")
+        return FileManager.default.fileExists(atPath: "\(pwd)Public/resources/\(rawValue)")
     }
 }

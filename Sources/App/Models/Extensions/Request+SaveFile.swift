@@ -10,7 +10,7 @@ import Vapor
 
 extension Request {
     func saveFileTyped(_ type: FileType) throws -> Future<ServerResponse> {
-        return try saveWithFilename("Public/\(type.rawValue)", on: self)
+        return try saveWithFilename("Public/resources/\(type.rawValue)", on: self)
     }
 }
 
@@ -21,7 +21,7 @@ private enum PathType {
     func pathComponentFor(_ file: UploadedFile) -> String {
         switch self {
         case .default:
-            return "Public/\(file.name)"
+            return "Public/resources/\(file.name)"
         case .custom(name: let name):
             return name
         }
