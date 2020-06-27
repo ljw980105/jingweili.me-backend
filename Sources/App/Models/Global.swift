@@ -10,7 +10,7 @@ import Vapor
 
 func readFileNamed(_ name: String, isPublic: Bool) throws -> Data {
     return try Data(contentsOf: pwd()
-            .appendingPathComponent(isPublic ? "Public/" : "")
+            .appendingPathComponent(isPublic ? "Public/resources/" : "")
             .appendingPathComponent(name))
 }
 
@@ -25,7 +25,7 @@ func readStringFromFile(named name: String, isPublic: Bool) throws -> String {
 
 func deleteFileNamed(_ name: String, isPublic: Bool) throws {
     let url = pwd()
-            .appendingPathComponent(isPublic ? "Public/" : "")
+            .appendingPathComponent(isPublic ? "Public/resources/" : "")
             .appendingPathComponent(name)
     try FileManager.default.removeItem(at: url)
 }

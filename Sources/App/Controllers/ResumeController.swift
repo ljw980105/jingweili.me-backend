@@ -47,5 +47,32 @@ struct ResumeController: RouteCollection {
                 }
                 .transform(to: ServerResponse.defaultSuccess)
         }
+        
+        // MARK: - Resume Data
+        router.get("api", "resume-data") { req -> Future<ResumeData> in
+            return ResumeData.query(on: req).all()
+                .map { multipleData -> ResumeData in
+                    guard let first = multipleData.first else {
+                        throw NSError(domain: "No Resume Data Exists", code: 0, userInfo: nil)
+                    }
+                    return first
+            }
+        }
+        
+        router.post("api", "resume-data") { req -> Future<ServerResponse> in
+            try req.authenticate()
+            return req.deleteAllOnType(ResumeData.self, beforeDeleteCallback: { data in
+                    data.forEach { data in
+                        let webskills = data.webSkillsFrontend + data.webSkillsBackend + data.webSkillsGeneral
+                        webskills.forEach { try? deleteFileNamed($0.imageUrl, isPublic: true) }
+                    }
+                })
+                .flatMap { _ -> Future<ResumeData> in
+                    return try req.content
+                        .decode(ResumeData.self)
+                        .flatMap(to: ResumeData.self) { $0.save(on: req) }
+                }
+                .transform(to: ServerResponse.defaultSuccess)
+        }
     }
 }
