@@ -40,6 +40,8 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     migrations.add(model: Project.self, database: .sqlite)
     migrations.add(model: Experience.self, database: .sqlite)
     migrations.add(model: ResumeData.self, database: .sqlite)
+    migrations.add(model: AppsData.self, database: .sqlite)
+    migrations.add(model: BeatslyticsData.self, database: .sqlite)
     services.register(migrations)
     // set the max allowed request size
     services.register(NIOServerConfig.default(maxBodySize: 20_000_000))
