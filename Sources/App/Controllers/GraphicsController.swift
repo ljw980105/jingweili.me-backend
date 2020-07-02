@@ -15,6 +15,20 @@ struct GraphicsController: RouteCollection {
             return GraphicProject.query(on: req).all()
         }
         
+        router.get("api", "get-graphic-projects/simplified") { req -> Future<[NameAndURL]> in
+            return GraphicProject.query(on: req).all()
+                .map { projects -> [GraphicProject] in
+                    if let limit = req.query[Int.self, at: "limit"] {
+                        if limit == 0 { throw NSError(domain: "Limit cannot be 0" , code: 0) }
+                         return projects.count > limit ? Array(projects.prefix(limit)) : projects
+                    }
+                    return projects
+                }
+                .map { projects -> [NameAndURL] in
+                    return projects.compactMap { NameAndURL(graphic: $0) }
+                }
+        }
+        
         router.post("api", "add-graphic-project") { req -> Future<ServerResponse> in
             try req.authenticate()
             return try req.content

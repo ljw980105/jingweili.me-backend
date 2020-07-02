@@ -28,5 +28,19 @@ struct ProjectsController: RouteCollection {
         router.get("api", "projects") { req -> Future<[Project]> in
             return Project.query(on: req).all()
         }
+        
+        router.get("api", "projects", "simplified") { req -> Future<[NameAndURL]> in
+            return Project.query(on: req).all()
+                .map { projects -> [Project] in
+                    if let limit = req.query[Int.self, at: "limit"] {
+                         if limit == 0 { throw NSError(domain: "Limit cannot be 0" , code: 0) }
+                         return projects.count > limit ? Array(projects.prefix(limit)) : projects
+                    }
+                    return projects
+                }
+                .map { projects -> [NameAndURL] in
+                    return projects.compactMap { NameAndURL(project: $0) }
+                }
+        }
     }
 }
