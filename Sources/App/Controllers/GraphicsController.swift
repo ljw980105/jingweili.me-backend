@@ -43,5 +43,12 @@ struct GraphicsController: RouteCollection {
                 .delete(on: req)
                 .transform(to: ServerResponse.defaultSuccess)
         }
+        
+        router.post("api", "multiple-graphics-projects") { req -> Future<ServerResponse> in
+            try req.authenticate()
+            return req
+                .deleteAllOnType(GraphicProject.self)
+                .decodeAndSaveOnArrayTyped(GraphicProject.self, req: req)
+        }
     }
 }

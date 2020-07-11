@@ -19,4 +19,18 @@ extension Future {
         }
         .transform(to: req.future(ServerResponse.defaultSuccess))
     }
+    
+    /// First decode the model object embeded in the request and then saves it in the DB
+    /// - Parameters:
+    ///   - type: The type of the array's inner element
+    ///   - req: The vapor request
+    /// - Returns: A future indicating completion
+    func decodeAndSaveOnArrayTyped<T: Model>(_ type: T.Type, req: Request) -> Future<ServerResponse> {
+        return self.flatMap { _ -> Future<[T]> in // save
+            return try req.content
+                .decode([T].self)
+                .flatMap { $0.save(on: req) }
+        }
+        .transform(to: req.future(ServerResponse.defaultSuccess))
+    }
 }
