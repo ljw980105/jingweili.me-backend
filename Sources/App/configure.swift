@@ -15,12 +15,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     var middlewares = MiddlewareConfig() // Create _empty_ middleware config
     middlewares.use(FileMiddleware.self) // Serves files from `Public/` directory
     middlewares.use(ErrorMiddleware.self) // Catches errors and converts to HTTP response
-    let corsMiddleware = CORSMiddleware(configuration: CORSMiddleware.Configuration(
-        allowedOrigin: .all,
-        allowedMethods: [.GET, .POST, .PUT, .OPTIONS, .DELETE, .PATCH],
-        allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith, .userAgent, .accessControlAllowOrigin]
-    ))
-    middlewares.use(corsMiddleware)
+    FeatureFlags.configureMiddlewareFrom(config: &middlewares)
     services.register(middlewares)
 
     // Configure a SQLite database
@@ -44,5 +39,5 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     migrations.add(model: BeatslyticsData.self, database: .sqlite)
     services.register(migrations)
     // set the max allowed request size
-    services.register(NIOServerConfig.default(maxBodySize: 20_000_000))
+    services.register(NIOServerConfig.default(maxBodySize: 100_000_000))
 }

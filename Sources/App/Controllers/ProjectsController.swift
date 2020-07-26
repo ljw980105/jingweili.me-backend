@@ -14,9 +14,7 @@ struct ProjectsController: RouteCollection {
         
         router.post("api", "projects") { req -> Future<ServerResponse> in
             try req.authenticate()
-            return req.deleteAllOnType(Project.self, beforeDeleteCallback: { projects in
-                    projects.forEach { try? deleteFileNamed($0.imageUrl, isPublic: true) }
-                })
+            return req.deleteAllOnType(Project.self)
                 .flatMap { _ -> Future<[Project]> in // save
                     return try req.content
                         .decode([Project].self)
