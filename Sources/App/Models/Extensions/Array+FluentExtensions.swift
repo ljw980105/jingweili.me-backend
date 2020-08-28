@@ -13,7 +13,7 @@ extension Array where Element: Model {
     /// Saves an array of elements to the database.
     func save(on request: Request) -> Future<[Element]> {
         return self
-            .map { $0.save(on: request) }
+            .map { $0.create(on: request) }
             .flatten(on: request)
     }
     
