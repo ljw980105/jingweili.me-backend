@@ -8,13 +8,24 @@
 import Foundation
 import Vapor
 
-enum FeatureFlags {
-    static let unrestrictedCORS = false
+class FeatureFlags: Codable {
+    static let `default`: FeatureFlags = .load()
+    
+    let unrestrictedCORS: Bool
+    
+    private class func load() -> FeatureFlags {
+        do {
+            let file = try readFileNamed("FeatureFlags.json", isPublic: false)
+            return try JSONDecoder().decode(FeatureFlags.self, from: file)
+        } catch let error {
+            fatalError(error.localizedDescription)
+        }
+    }
 }
 
 
 extension FeatureFlags {
-    static func configureMiddlewareFrom(config: inout MiddlewareConfig) {
+    func configureMiddlewareFrom(config: inout MiddlewareConfig) {
         if unrestrictedCORS {
             config.use(CORSMiddleware(configuration: CORSMiddleware.Configuration(
                 allowedOrigin: .all,

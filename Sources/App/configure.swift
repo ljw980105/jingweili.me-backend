@@ -15,7 +15,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     var middlewares = MiddlewareConfig() // Create _empty_ middleware config
     middlewares.use(FileMiddleware.self) // Serves files from `Public/` directory
     middlewares.use(ErrorMiddleware.self) // Catches errors and converts to HTTP response
-    FeatureFlags.configureMiddlewareFrom(config: &middlewares)
+    FeatureFlags.default.configureMiddlewareFrom(config: &middlewares)
     services.register(middlewares)
 
     // Configure a SQLite database
