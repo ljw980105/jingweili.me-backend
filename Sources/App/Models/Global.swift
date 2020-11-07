@@ -34,3 +34,7 @@ func deleteFileNamed(_ name: String, isPublic: Bool) throws {
 func pwd() -> URL {
     return URL(fileURLWithPath: DirectoryConfig.detect().workDir)
 }
+
+func directoryAtPublic() -> URL {
+    pwd().appendingPathComponent("Public/resources/")
+}
