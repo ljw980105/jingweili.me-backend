@@ -27,12 +27,6 @@ struct HomePageController: RouteCollection {
             return PCSetupEntry.query(on: req).all()
         }
         
-        // MARK: - File Upload
-        router.post("api", "upload-file") { req -> Future<ServerResponse> in
-            try req.authenticate()
-            return try saveWithOriginalFilename(on: req)
-        }
-        
         // MARK: - About
         router.post("api", "about-info") { req -> Future<ServerResponse> in
             try req.authenticate()

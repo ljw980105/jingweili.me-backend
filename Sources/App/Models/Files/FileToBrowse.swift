@@ -16,8 +16,6 @@ struct FileToBrowse: Content {
     let createdDate: Date?
     let fileSize: Int64?
     
-    private static let bcf = ByteCountFormatter()
-    
     init(url: URL) throws {
         name = url.lastPathComponent
         type = url.pathExtension

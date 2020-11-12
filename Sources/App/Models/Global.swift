@@ -23,18 +23,12 @@ func readStringFromFile(named name: String, isPublic: Bool) throws -> String {
     }
 }
 
-func deleteFileNamed(_ name: String, isPublic: Bool) throws {
-    let url = pwd()
-            .appendingPathComponent(isPublic ? "Public/resources/" : "")
-            .appendingPathComponent(name)
+func deleteFileNamed(_ name: String, at directory: DirectoryType) throws {
+    let url = directory.directory.appendingPathComponent(name)
     try FileManager.default.removeItem(at: url)
 }
 
 /// Vapor's current working directory, available to have files written to it.
 func pwd() -> URL {
     return URL(fileURLWithPath: DirectoryConfig.detect().workDir)
-}
-
-func directoryAtPublic() -> URL {
-    pwd().appendingPathComponent("Public/resources/")
 }
