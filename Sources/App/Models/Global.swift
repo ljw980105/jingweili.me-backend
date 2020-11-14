@@ -24,6 +24,7 @@ func readStringFromFile(named name: String, isPublic: Bool) throws -> String {
 }
 
 func deleteFileNamed(_ name: String, at directory: DirectoryType) throws {
+    print("File \(name) deleted at directory \(directory.rawValue)")
     let url = directory.directory.appendingPathComponent(name)
     try FileManager.default.removeItem(at: url)
 }
