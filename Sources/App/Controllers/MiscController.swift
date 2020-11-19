@@ -41,6 +41,13 @@ struct MiscController: RouteCollection {
                 }
         }
         
+        router.get("api", "directory-info") { req -> Future<DirectoryInfo> in
+            try req.authenticate()
+            let directoryType = try req.directoryType()
+            let info = try DirectoryInfo(url: directoryType.directory)
+            return req.future(info)
+        }
+        
         router.get("api", "stream-file") { req -> Future<Response> in
             try req.authenticate()
             let directoryType = try req.directoryType()

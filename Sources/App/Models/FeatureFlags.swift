@@ -15,7 +15,7 @@ class FeatureFlags: Codable {
     
     private class func load() -> FeatureFlags {
         do {
-            let file = try readFileNamed("FeatureFlags.json", isPublic: false)
+            let file = try readFileNamed("FeatureFlags.json", directory: .root)
             return try JSONDecoder().decode(FeatureFlags.self, from: file)
         } catch let error {
             fatalError(error.localizedDescription)

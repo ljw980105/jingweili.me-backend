@@ -8,14 +8,13 @@
 import Foundation
 import Vapor
 
-func readFileNamed(_ name: String, isPublic: Bool) throws -> Data {
-    return try Data(contentsOf: pwd()
-            .appendingPathComponent(isPublic ? "Public/resources/" : "")
+func readFileNamed(_ name: String, directory: DirectoryType) throws -> Data {
+    return try Data(contentsOf: directory.directory
             .appendingPathComponent(name))
 }
 
-func readStringFromFile(named name: String, isPublic: Bool) throws -> String {
-    let data = try readFileNamed(name, isPublic: isPublic)
+func readStringFromFile(named name: String, directory: DirectoryType) throws -> String {
+    let data = try readFileNamed(name, directory: directory)
     if let result = String(data: data, encoding: .utf8) {
         return result
     } else {
