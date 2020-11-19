@@ -18,7 +18,7 @@ struct AppsController: RouteCollection {
                 .deleteAllOnType(AppsData.self, beforeDeleteCallback: { appsData in
                     appsData.forEach { appsDatum in
                         (appsDatum.apps + appsDatum.skills)
-                            .forEach { try? deleteFileNamed($0.imageLink, isPublic: true)}
+                            .forEach { try? deleteFileNamed($0.imageLink, at: .public)}
                     }
                 })
                 .flatMap { _ -> Future<AppsData> in // save

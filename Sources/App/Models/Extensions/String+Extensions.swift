@@ -19,10 +19,9 @@ extension String {
         }
     }
     
-    func saveToFileNamed(_ name: String, isPublic: Bool) throws {
-        let url = URL(fileURLWithPath: DirectoryConfig.detect().workDir)
-            .appendingPathComponent("\(isPublic ? "Public/" : "")\(name)")
-        try self.write(to: url, atomically: true, encoding: .utf8)
+    func saveToFileNamed(_ name: String, at directory: Directory) throws {
+        let url = directory.directory.appendingPathComponent(name)
+        try write(to: url, atomically: true, encoding: .utf8)
     }
 
     init(randomWithLength length: Int) {

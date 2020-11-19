@@ -8,14 +8,13 @@
 import Foundation
 import Vapor
 
-func readFileNamed(_ name: String, isPublic: Bool) throws -> Data {
-    return try Data(contentsOf: pwd()
-            .appendingPathComponent(isPublic ? "Public/resources/" : "")
+func readFileNamed(_ name: String, directory: Directory) throws -> Data {
+    return try Data(contentsOf: directory.directory
             .appendingPathComponent(name))
 }
 
-func readStringFromFile(named name: String, isPublic: Bool) throws -> String {
-    let data = try readFileNamed(name, isPublic: isPublic)
+func readStringFromFile(named name: String, directory: Directory) throws -> String {
+    let data = try readFileNamed(name, directory: directory)
     if let result = String(data: data, encoding: .utf8) {
         return result
     } else {
@@ -23,10 +22,9 @@ func readStringFromFile(named name: String, isPublic: Bool) throws -> String {
     }
 }
 
-func deleteFileNamed(_ name: String, isPublic: Bool) throws {
-    let url = pwd()
-            .appendingPathComponent(isPublic ? "Public/resources/" : "")
-            .appendingPathComponent(name)
+func deleteFileNamed(_ name: String, at directory: Directory) throws {
+    print("File \(name) deleted at directory \(directory.rawValue)")
+    let url = directory.directory.appendingPathComponent(name)
     try FileManager.default.removeItem(at: url)
 }
 

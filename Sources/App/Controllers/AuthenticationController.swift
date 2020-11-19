@@ -27,18 +27,18 @@ struct AuthenticationController: RouteCollection {
             return try req.content
                 .decode(Password.self)
                 .flatMap { passwordObj -> Future<Token> in
-                    let password = try readStringFromFile(named: "password", isPublic: false).base64Decoded()
+                    let password = try readStringFromFile(named: "password", directory: .root).base64Decoded()
                     guard password == passwordObj.password else {
                         throw Abort(.unauthorized)
                     }
                     let token = String(randomWithLength: 20)
-                    try token.saveToFileNamed("currentToken", isPublic: false)
+                    try token.saveToFileNamed("currentToken", at: .root)
                     return req.future(Token(token: token))
                 }
         }
         
         router.get("api", "logout") { req -> Future<ServerResponse> in
-            try deleteFileNamed("currentToken", isPublic: false)
+            try deleteFileNamed("currentToken", at: .root)
             return req.future(ServerResponse.defaultSuccess)
         }
     }

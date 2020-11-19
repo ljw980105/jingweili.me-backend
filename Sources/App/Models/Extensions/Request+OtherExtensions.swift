@@ -27,4 +27,11 @@ extension Request {
                 return results.delete(on: self)
         }
     }
+    
+    func queryParam<T: Decodable>(named name: String, type: T.Type) throws -> T {
+        guard let value = query[T.self, at: name] else {
+            throw NSError(domain: "Missing query param \(name)", code: 0)
+        }
+        return value
+    }
 }

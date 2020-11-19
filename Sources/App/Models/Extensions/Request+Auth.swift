@@ -13,7 +13,7 @@ extension Request {
         guard let bearer = self.http.headers.bearerAuthorization else {
             throw Abort(.unauthorized)
         }
-        let currentToken = try readStringFromFile(named: "currentToken", isPublic: false)
+        let currentToken = try readStringFromFile(named: "currentToken", directory: .root)
         guard currentToken == bearer.token else {
             throw Abort(.unauthorized)
         }

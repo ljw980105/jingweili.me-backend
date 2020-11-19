@@ -64,7 +64,7 @@ struct ResumeController: RouteCollection {
             return req.deleteAllOnType(ResumeData.self, beforeDeleteCallback: { data in
                     data.forEach { data in
                         let webskills = data.webSkillsFrontend + data.webSkillsBackend + data.webSkillsGeneral
-                        webskills.forEach { try? deleteFileNamed($0.imageUrl, isPublic: true) }
+                        webskills.forEach { try? deleteFileNamed($0.imageUrl, at: .public) }
                     }
                 })
                 .flatMap { _ -> Future<ResumeData> in

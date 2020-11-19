@@ -8,4 +8,5 @@ public func routes(_ router: Router) throws {
     try router.register(collection: HomePageController())
     try router.register(collection: ProjectsController())
     try router.register(collection: AppsController())
+    try router.register(collection: MiscController())
 }

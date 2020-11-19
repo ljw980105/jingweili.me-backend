@@ -10,24 +10,9 @@ import Vapor
 
 extension Request {
     func saveFileTyped(_ type: FileType) throws -> Future<ServerResponse> {
-        return try saveWithFilename("Public/resources/\(type.rawValue)", on: self)
+        return try saveWithFilename(type.rawValue, on: self)
     }
 }
-
-private enum PathType {
-    case `default`
-    case custom(name: String)
-    
-    func pathComponentFor(_ file: UploadedFile) -> String {
-        switch self {
-        case .default:
-            return "Public/resources/\(file.name)"
-        case .custom(name: let name):
-            return name
-        }
-    }
-}
-
 
 /// Saves the file contained in the request to the url component specified.
 /// - Default behavior will allow the file saved to be overwritten if it's already there.
@@ -37,20 +22,29 @@ private enum PathType {
 /// formData.append('name', name);
 /// ```
 func saveWithFilename(_ filename: String, on req: Request) throws -> Future<ServerResponse> {
-    return try saveFile(on: req, pathType: .custom(name: filename))
+    return try saveFile(on: req, customName: filename)
 }
 
-func saveWithOriginalFilename(on req: Request) throws -> Future<ServerResponse> {
-    return try saveFile(on: req, pathType: .default)
+func saveWithOriginalFilename(
+    on req: Request,
+    directory: Directory = .public) throws -> Future<ServerResponse>
+{
+    return try saveFile(on: req, directory: directory)
 }
 
-private func saveFile(on req: Request, pathType: PathType) throws -> Future<ServerResponse> {
+/// - Parameters:
+///   - customName: If this param is provided then it will override the original file's name
+private func saveFile(
+    on req: Request,
+    customName: String? = nil,
+    directory: Directory = .public) throws -> Future<ServerResponse>
+{
     return try req
         .content
         .decode(UploadedFile.self)
         .flatMap { file -> Future<ServerResponse> in
-            let pathComponent = pathType.pathComponentFor(file)
-            let url = pwd().appendingPathComponent(pathComponent)
+            let url = directory.directory.appendingPathComponent(customName ?? file.name)
+            print("File \(customName ?? file.name) uploaded to directory \(directory.rawValue)")
             try file.file.write(to: url)
             return req.future(ServerResponse.defaultSuccess)
     }
