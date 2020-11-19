@@ -59,9 +59,9 @@ struct MiscController: RouteCollection {
 
 fileprivate extension Request {
     /// get the query parameter named `directory`
-    func directoryType() throws -> DirectoryType {
+    func directoryType() throws -> Directory {
         guard let directory = query[String.self, at: "directory"],
-              let directoryType = DirectoryType(string: directory) else {
+              let directoryType = Directory(string: directory) else {
             throw NSError(domain: "Missing parameter directory", code: 0)
         }
         return directoryType

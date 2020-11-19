@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ljw980105/jingweili.me-backend.svg?branch=master)](https://travis-ci.org/ljw980105/jingweili.me-backend)
+
 # [jingweili.me](https://jingweili.me) Backend
 
 Backend server code for the frontend website [jingweili.me](https://jingweili.me), whose repository is [here](https://github.com/ljw980105/jingweili.me).

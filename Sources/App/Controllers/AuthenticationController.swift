@@ -32,7 +32,7 @@ struct AuthenticationController: RouteCollection {
                         throw Abort(.unauthorized)
                     }
                     let token = String(randomWithLength: 20)
-                    try token.saveToFileNamed("currentToken", isPublic: false)
+                    try token.saveToFileNamed("currentToken", at: .root)
                     return req.future(Token(token: token))
                 }
         }

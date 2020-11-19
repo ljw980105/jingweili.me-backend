@@ -8,12 +8,12 @@
 import Foundation
 import Vapor
 
-func readFileNamed(_ name: String, directory: DirectoryType) throws -> Data {
+func readFileNamed(_ name: String, directory: Directory) throws -> Data {
     return try Data(contentsOf: directory.directory
             .appendingPathComponent(name))
 }
 
-func readStringFromFile(named name: String, directory: DirectoryType) throws -> String {
+func readStringFromFile(named name: String, directory: Directory) throws -> String {
     let data = try readFileNamed(name, directory: directory)
     if let result = String(data: data, encoding: .utf8) {
         return result
@@ -22,7 +22,7 @@ func readStringFromFile(named name: String, directory: DirectoryType) throws -> 
     }
 }
 
-func deleteFileNamed(_ name: String, at directory: DirectoryType) throws {
+func deleteFileNamed(_ name: String, at directory: Directory) throws {
     print("File \(name) deleted at directory \(directory.rawValue)")
     let url = directory.directory.appendingPathComponent(name)
     try FileManager.default.removeItem(at: url)

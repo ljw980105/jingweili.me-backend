@@ -27,7 +27,7 @@ func saveWithFilename(_ filename: String, on req: Request) throws -> Future<Serv
 
 func saveWithOriginalFilename(
     on req: Request,
-    directory: DirectoryType = .public) throws -> Future<ServerResponse>
+    directory: Directory = .public) throws -> Future<ServerResponse>
 {
     return try saveFile(on: req, directory: directory)
 }
@@ -37,7 +37,7 @@ func saveWithOriginalFilename(
 private func saveFile(
     on req: Request,
     customName: String? = nil,
-    directory: DirectoryType = .public) throws -> Future<ServerResponse>
+    directory: Directory = .public) throws -> Future<ServerResponse>
 {
     return try req
         .content

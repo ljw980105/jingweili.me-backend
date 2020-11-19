@@ -1,5 +1,5 @@
 //
-//  DirectoryType.swift
+//  Directory.swift
 //  App
 //
 //  Created by Jing Wei Li on 11/11/20.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum DirectoryType: String {
+enum Directory: String {
     /// public path where most resources of the website are served
     case `public` = "Public/resources/"
     /// root path. Many sensitive files are served here
