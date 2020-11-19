@@ -16,7 +16,7 @@ enum Directory: String {
     case `private` = "Private/"
     
     var directory: URL {
-        pwd().appendingPathComponent(rawValue)
+        return pwd().appendingPathComponent(rawValue)
     }
     
     init?(string: String) {
