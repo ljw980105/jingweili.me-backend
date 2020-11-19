@@ -16,6 +16,7 @@ struct DirectoryInfo: Content {
     let usedCapacity: Int64?
     
     init(url: URL) throws {
+        #if os(macOS)
         let resourceValues = try url.resourceValues(forKeys: Set(resourceKeys)).allValues
         totalCapacity = resourceValues[.volumeTotalCapacityKey] as? Int64
         availableCapacity = resourceValues[.volumeAvailableCapacityKey] as? Int64
@@ -24,5 +25,10 @@ struct DirectoryInfo: Content {
         } else {
             usedCapacity = nil
         }
+        #else
+        totalCapacity = 0
+        availableCapacity = 0
+        usedCapacity = 0
+        #endif
     }
 }

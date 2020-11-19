@@ -19,8 +19,13 @@ struct FileToBrowse: Content {
     init(url: URL) throws {
         name = url.lastPathComponent
         type = url.pathExtension
+        #if os(macOS)
         let resourceValues = try url.resourceValues(forKeys: Set(resourceKeys)).allValues
         createdDate = resourceValues[.creationDateKey] as? Date
         fileSize = (resourceValues[.fileSizeKey] as? NSNumber)?.int64Value
+        #else
+        createdDate = Date(timeIntervalSinceReferenceDate: 0)
+        fileSize = 0
+        #endif
     }
 }
