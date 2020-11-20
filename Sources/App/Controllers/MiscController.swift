@@ -21,7 +21,9 @@ struct MiscController: RouteCollection {
                 .contentsOfDirectory(
                     at: directoryType.directory,
                     includingPropertiesForKeys: nil)
-                .filter { !$0.absoluteString.contains(".gitkeep") }
+                .filterMultipleElements(
+                    using: { !$0.absoluteString.contains($1) },
+                    elements: [".gitkeep", ".gitignore"])
             return req.future(try items.map(FileToBrowse.init))
         }
         

@@ -1,6 +1,9 @@
 language: objective-c
 os: osx
 osx_image: xcode11.3
+branches:
+  only: 
+    - master
 before_script:
   - brew install libressl
 script:
