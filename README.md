@@ -21,3 +21,9 @@ swift build
 .build/debug/Run &> output.log &
 disown %1
 ```
+
+### Foundation APIs that does not work on Linux
+* `URL`
+    * `func resourceValues(forKeys keys: Set<URLResourceKey>) throws -> URLResourceValues`
+* `FileManager`
+    * `FileManager.DirectoryEnumerationOptions`

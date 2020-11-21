@@ -17,10 +17,13 @@ struct MiscController: RouteCollection {
             try req.authenticate()
             let directoryType = try req.directoryType()
             let fm = FileManager.default
-            let items = try fm.contentsOfDirectory(
-                at: directoryType.directory,
-                includingPropertiesForKeys: nil,
-                options: .skipsHiddenFiles)
+            let items = try fm
+                .contentsOfDirectory(
+                    at: directoryType.directory,
+                    includingPropertiesForKeys: nil)
+                .filterMultipleElements(
+                    using: { !$0.absoluteString.contains($1) },
+                    elements: [".gitkeep", ".gitignore"])
             return req.future(try items.map(FileToBrowse.init))
         }
         
