@@ -10,56 +10,52 @@ import Vapor
 import Fluent
 
 struct ResumeController: RouteCollection {
-    func boot(router: Router) throws {
+    func boot(routes: RoutesBuilder) throws {
         // MARK: - Resumes and CVs
-        router.post("api", "upload-resume") { (req: Request) -> Future<ServerResponse> in
+        routes.post("api", "upload-resume") { (req: Request) -> EventLoopFuture<ServerResponse> in
             try req.authenticate()
             return try req.saveFileTyped(.resume)
         }
         
-        router.post("api", "upload-cv") { (req: Request) -> Future<ServerResponse> in
+        routes.post("api", "upload-cv") { (req: Request) -> EventLoopFuture<ServerResponse> in
             try req.authenticate()
             return try req.saveFileTyped(.cv)
         }
         
-        router.get("api", "cv") { req -> Future<FileLocation> in
+        routes.get("api", "cv") { req -> EventLoopFuture<FileLocation> in
             let exists = FileType.cv.fileExists()
-            return req.future(FileLocation(exists: exists, url: exists ? FileType.cv.rawValue : ""))
+            return req.eventLoop.future(FileLocation(exists: exists, url: exists ? FileType.cv.rawValue : ""))
         }
         
-        router.get("api", "resume") { req -> Future<FileLocation> in
+        routes.get("api", "resume") { req -> EventLoopFuture<FileLocation> in
             let exists = FileType.resume.fileExists()
-            return req.future(FileLocation(exists: exists, url: exists ? FileType.resume.rawValue : ""))
+            return req.eventLoop.future(FileLocation(exists: exists, url: exists ? FileType.resume.rawValue : ""))
         }
         
         // MARK: - Experiences
-        router.get("api", "experiences") { req -> Future<[Experience]> in
-            return Experience.query(on: req).all()
+        routes.get("api", "experiences") { req -> EventLoopFuture<[Experience]> in
+            return Experience.query(on: req.db).all()
         }
         
-        router.post("api", "experiences") { req -> Future<ServerResponse> in
+        routes.post("api", "experiences") { req -> EventLoopFuture<ServerResponse> in
             try req.authenticate()
             return req.deleteAllOnType(Experience.self)
-                .flatMap { _ -> Future<[Experience]> in
-                    return try req.content
-                        .decode([Experience].self)
-                        .flatMap(to: [Experience].self) { $0.save(on: req) }
+                .flatMapThrowing { _ -> EventLoopFuture<Void> in
+                    let experiences = try req.content.decode([Experience].self)
+                    return experiences.save(on: req)
                 }
                 .transform(to: ServerResponse.defaultSuccess)
         }
         
         // MARK: - Resume Data
-        router.get("api", "resume-data") { req -> Future<ResumeData> in
-            return ResumeData.query(on: req).all()
-                .map { multipleData -> ResumeData in
-                    guard let first = multipleData.first else {
-                        throw NSError(domain: "No Resume Data Exists", code: 0, userInfo: nil)
-                    }
-                    return first
-            }
+        routes.get("api", "resume-data") { req -> EventLoopFuture<ResumeData> in
+            return ResumeData
+                .query(on: req.db)
+                .first()
+                .unwrap(orError: NSError(domain: "No Resume Data Exists", code: 0))
         }
         
-        router.post("api", "resume-data") { req -> Future<ServerResponse> in
+        routes.post("api", "resume-data") { req -> EventLoopFuture<ServerResponse> in
             try req.authenticate()
             return req.deleteAllOnType(ResumeData.self, beforeDeleteCallback: { data in
                     data.forEach { data in
@@ -67,10 +63,9 @@ struct ResumeController: RouteCollection {
                         webskills.forEach { try? deleteFileNamed($0.imageUrl, at: .public) }
                     }
                 })
-                .flatMap { _ -> Future<ResumeData> in
-                    return try req.content
-                        .decode(ResumeData.self)
-                        .flatMap(to: ResumeData.self) { $0.save(on: req) }
+                .flatMapThrowing { _ -> EventLoopFuture<Void> in
+                    let resumeData = try req.content.decode(ResumeData.self)
+                    return resumeData.save(on: req.db)
                 }
                 .transform(to: ServerResponse.defaultSuccess)
         }

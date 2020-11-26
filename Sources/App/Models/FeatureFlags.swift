@@ -25,9 +25,9 @@ class FeatureFlags: Codable {
 
 
 extension FeatureFlags {
-    func configureMiddlewareFrom(config: inout MiddlewareConfig) {
+    func configureMiddlewaresFrom(app: Application) {
         if unrestrictedCORS {
-            config.use(CORSMiddleware(configuration: CORSMiddleware.Configuration(
+            app.middleware.use(CORSMiddleware(configuration: CORSMiddleware.Configuration(
                 allowedOrigin: .all,
                 allowedMethods: [.GET, .POST, .PUT, .OPTIONS, .DELETE, .PATCH],
                 allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith, .userAgent, .accessControlAllowOrigin]

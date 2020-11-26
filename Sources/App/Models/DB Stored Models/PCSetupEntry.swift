@@ -7,32 +7,53 @@
 
 import Foundation
 import Vapor
-import FluentSQLite
+import Fluent
+import FluentSQLiteDriver
 
-final class PCSetupEntry: Codable {
-    var id: Int?
-    let partName: String;
-    let partDetail: String;
-    let partPurchaseLink: String;
-
-    init(name: String, detail: String, buyLink: String, id: Int? = nil) {
-        self.id = id
-        partName = name;
-        partDetail = detail;
-        partPurchaseLink = buyLink;
-    }
-}
-
-extension PCSetupEntry: Model {
-    typealias Database = SQLiteDatabase
-    typealias ID = Int
-    public static var idKey: IDKey = \PCSetupEntry.id
+final class PCSetupEntry: Codable, Model {
+    @ID
+    var id: UUID?
+    @Field(key: "partName")
+    var partName: String
+    @Field(key: "partDetail")
+    var partDetail: String
+    @Field(key: "partPurchaseLink")
+    var partPurchaseLink: String
 }
 
 extension PCSetupEntry: Content {}
 
-extension PCSetupEntry: Migration {}
+extension PCSetupEntry: Migratable {
+    static var idRequired: Bool {
+        return true
+    }
+    
+    static var fields: [FieldForMigratable] {
+        return [
+            .init("partName", .string),
+            .init("partDetail", .string),
+            .init("partPurchaseLink", .string),
+        ]
+    }
+    
+    static var schema: String {
+        return "PCSetupEntry"
+    }
+}
 
-extension PCSetupEntry: Parameter {}
+class PCSetupEntryMigrator: Migration {
+    func prepare(on database: Database) -> EventLoopFuture<Void> {
+        database.schema("PCSetupEntry")
+            .id()
+            .field("partName", .string, .required)
+            .field("partDetail", .string, .required)
+            .field("partPurchaseLink", .string, .required)
+            .create()
+    }
+    
+    func revert(on database: Database) -> EventLoopFuture<Void> {
+        database.schema("PCSetupEntry").delete()
+    }
+}
 
 

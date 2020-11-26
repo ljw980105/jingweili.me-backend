@@ -9,7 +9,7 @@ import Foundation
 import Vapor
 
 extension Request {
-    func saveFileTyped(_ type: FileType) throws -> Future<ServerResponse> {
+    func saveFileTyped(_ type: FileType) throws -> EventLoopFuture<ServerResponse> {
         return try saveWithFilename(type.rawValue, on: self)
     }
 }
@@ -21,13 +21,13 @@ extension Request {
 /// formData.append('file', fileToUpload);
 /// formData.append('name', name);
 /// ```
-func saveWithFilename(_ filename: String, on req: Request) throws -> Future<ServerResponse> {
+func saveWithFilename(_ filename: String, on req: Request) throws -> EventLoopFuture<ServerResponse> {
     return try saveFile(on: req, customName: filename)
 }
 
 func saveWithOriginalFilename(
     on req: Request,
-    directory: Directory = .public) throws -> Future<ServerResponse>
+    directory: Directory = .public) throws -> EventLoopFuture<ServerResponse>
 {
     return try saveFile(on: req, directory: directory)
 }
@@ -37,15 +37,11 @@ func saveWithOriginalFilename(
 private func saveFile(
     on req: Request,
     customName: String? = nil,
-    directory: Directory = .public) throws -> Future<ServerResponse>
+    directory: Directory = .public) throws -> EventLoopFuture<ServerResponse>
 {
-    return try req
-        .content
-        .decode(UploadedFile.self)
-        .flatMap { file -> Future<ServerResponse> in
-            let url = directory.directory.appendingPathComponent(customName ?? file.name)
-            print("File \(customName ?? file.name) uploaded to directory \(directory.rawValue)")
-            try file.file.write(to: url)
-            return req.future(ServerResponse.defaultSuccess)
-    }
+    let file = try req.content.decode(UploadedFile.self)
+    let url = directory.directory.appendingPathComponent(customName ?? file.name)
+    print("File \(customName ?? file.name) uploaded to directory \(directory.rawValue)")
+    try file.file.write(to: url)
+    return req.eventLoop.future(ServerResponse.defaultSuccess)
 }

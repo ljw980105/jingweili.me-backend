@@ -28,7 +28,8 @@ func deleteFileNamed(_ name: String, at directory: Directory) throws {
     try FileManager.default.removeItem(at: url)
 }
 
+var currentDirectory: String = ""
 /// Vapor's current working directory, available to have files written to it.
 func pwd() -> URL {
-    return URL(fileURLWithPath: DirectoryConfig.detect().workDir)
+    return URL(fileURLWithPath: currentDirectory)
 }

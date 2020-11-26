@@ -7,28 +7,58 @@
 
 import Foundation
 import Vapor
-import FluentSQLite
+import Fluent
 
-final class BeatslyticsData: Codable {
-    var id: Int?
-    let metaAppStoreName: String
-    let metaAppStoreContent: String
-    let headline: String
-    let intro: String
-    let appStore: String
-    let features: [GenericFeature]
-    let support: String;
-    let license_agreement_url: String
-    let privacy_policy_url: String
-    let credits: GenericFeature
+final class BeatslyticsData: Codable, Model {
+    @ID
+    var id: UUID?
+    @Field(key: "metaAppStoreName")
+    var metaAppStoreName: String
+    @Field(key: "metaAppStoreContent")
+    var metaAppStoreContent: String
+    @Field(key: "headline")
+    var headline: String
+    @Field(key: "intro")
+    var intro: String
+    @Field(key: "appStore")
+    var appStore: String
+    @Field(key: "features")
+    var features: [GenericFeature]
+    @Field(key: "support")
+    var support: String
+    @Field(key: "license_agreement_url")
+    var license_agreement_url: String
+    @Field(key: "privacy_policy_url")
+    var privacy_policy_url: String
+    @Field(key: "credits")
+    var credits: GenericFeature
 }
 
-extension BeatslyticsData: Model {
-    typealias Database = SQLiteDatabase
-    typealias ID = Int
-    public static var idKey: IDKey = \BeatslyticsData.id
-}
-
-extension BeatslyticsData: Content, Migration, Parameter {
+extension BeatslyticsData: Content  {
     
+}
+
+extension BeatslyticsData: Migratable {
+    static var idRequired: Bool {
+        return true
+    }
+    
+    static var fields: [FieldForMigratable] {
+        return [
+            .init("metaAppStoreName", .string),
+            .init("metaAppStoreContent", .string),
+            .init("headline", .string),
+            .init("intro", .string),
+            .init("appStore", .string),
+            .init("features", .array(of: .dictionary(of: .dictionary))),
+            .init("support", .string),
+            .init("license_agreement_url", .string),
+            .init("privacy_policy_url", .string),
+            .init("credits", .dictionary),
+        ]
+    }
+    
+    static var schema: String {
+        return "BeatslyticsData"
+    }
 }

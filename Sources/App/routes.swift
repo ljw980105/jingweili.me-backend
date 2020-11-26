@@ -1,12 +1,13 @@
 import Vapor
+import Fluent
 
 /// Register your application's routes here.
-public func routes(_ router: Router) throws {
-    try router.register(collection: AuthenticationController())
-    try router.register(collection: ResumeController())
-    try router.register(collection: GraphicsController())
-    try router.register(collection: HomePageController())
-    try router.register(collection: ProjectsController())
-    try router.register(collection: AppsController())
-    try router.register(collection: MiscController())
+public func routes(_ app: Application) throws {
+    try app.register(collection: AuthenticationController())
+    try app.register(collection: ResumeController())
+    try app.register(collection: GraphicsController())
+    try app.register(collection: HomePageController())
+    try app.register(collection: ProjectsController())
+    try app.register(collection: AppsController())
+    try app.register(collection: MiscController())
 }
