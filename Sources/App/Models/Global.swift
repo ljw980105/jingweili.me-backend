@@ -8,6 +8,8 @@
 import Foundation
 import Vapor
 
+// MARK: - File Operations
+
 func readFileNamed(_ name: String, directory: Directory) throws -> Data {
     return try Data(contentsOf: directory.directory
             .appendingPathComponent(name))
@@ -28,8 +30,18 @@ func deleteFileNamed(_ name: String, at directory: Directory) throws {
     try FileManager.default.removeItem(at: url)
 }
 
-var currentDirectory: String = ""
+// MARK: - PWD
+
+/// Wrapper for the vapor's current working directory
+class PWDWrapper {
+    fileprivate static var pwd: String = ""
+    
+    static func setPWD(with app: Application) {
+        self.pwd = app.directory.workingDirectory
+    }
+}
+
 /// Vapor's current working directory, available to have files written to it.
 func pwd() -> URL {
-    return URL(fileURLWithPath: currentDirectory)
+    return URL(fileURLWithPath: PWDWrapper.pwd)
 }

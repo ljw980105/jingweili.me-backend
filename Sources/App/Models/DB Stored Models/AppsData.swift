@@ -9,7 +9,7 @@ import Foundation
 import Vapor
 import Fluent
 
-final class AppsData: Codable, Model {
+final class AppsData: Codable, Model, Content {
     @ID
     var id: UUID?
     @Field(key: "apps")
@@ -25,10 +25,6 @@ final class AppsOrSkill: Content {
     let description2: String?
     let linkTitle: String?
     let link: String?
-}
-
-extension AppsData: Content {
-    
 }
 
 extension AppsData: Migratable {

@@ -9,7 +9,7 @@ import Foundation
 import Vapor
 import Fluent
 
-final class BeatslyticsData: Codable, Model {
+final class BeatslyticsData: Codable, Model, Content {
     @ID
     var id: UUID?
     @Field(key: "metaAppStoreName")
@@ -34,10 +34,6 @@ final class BeatslyticsData: Codable, Model {
     var credits: GenericFeature
 }
 
-extension BeatslyticsData: Content  {
-    
-}
-
 extension BeatslyticsData: Migratable {
     static var idRequired: Bool {
         return true
@@ -50,7 +46,7 @@ extension BeatslyticsData: Migratable {
             .init("headline", .string),
             .init("intro", .string),
             .init("appStore", .string),
-            .init("features", .array(of: .dictionary(of: .dictionary))),
+            .init("features", .array(of: .dictionary)),
             .init("support", .string),
             .init("license_agreement_url", .string),
             .init("privacy_policy_url", .string),

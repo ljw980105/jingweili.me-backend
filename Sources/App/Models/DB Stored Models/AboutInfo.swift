@@ -9,17 +9,13 @@ import Foundation
 import Vapor
 import Fluent
 
-final class AboutInfo: Codable, Model {
+final class AboutInfo: Codable, Model, Content {
     @ID
     var id: UUID?
     @Field(key: "content")
     var content: String
     @Field(key: "imageUrl")
     var imageUrl: String
-}
-
-extension AboutInfo: Content {
-    
 }
 
 extension AboutInfo: Migratable {

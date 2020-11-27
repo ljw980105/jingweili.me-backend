@@ -31,7 +31,7 @@ public func configure(_ app: Application) throws {
     
     app.logger.logLevel = .error
     
-    currentDirectory = app.directory.workingDirectory
+    PWDWrapper.setPWD(with: app)
     
     app.routes.defaultMaxBodySize = "50mb"
     

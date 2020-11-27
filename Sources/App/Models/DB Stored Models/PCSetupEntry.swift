@@ -9,7 +9,7 @@ import Foundation
 import Vapor
 import Fluent
 
-final class PCSetupEntry: Codable, Model {
+final class PCSetupEntry: Codable, Model, Content {
     @ID
     var id: UUID?
     @Field(key: "partName")
@@ -19,8 +19,6 @@ final class PCSetupEntry: Codable, Model {
     @Field(key: "partPurchaseLink")
     var partPurchaseLink: String
 }
-
-extension PCSetupEntry: Content {}
 
 extension PCSetupEntry: Migratable {
     static var idRequired: Bool {
