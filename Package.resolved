@@ -20,6 +20,15 @@
         }
       },
       {
+        "package": "BSON",
+        "repositoryURL": "https://github.com/OpenKitten/BSON.git",
+        "state": {
+          "branch": null,
+          "revision": "a41b4e30e7b7a8afe0261abc7c6ee1d2b363a722",
+          "version": "7.0.26"
+        }
+      },
+      {
         "package": "console-kit",
         "repositoryURL": "https://github.com/vapor/console-kit.git",
         "state": {
@@ -47,12 +56,30 @@
         }
       },
       {
-        "package": "fluent-sqlite-driver",
-        "repositoryURL": "https://github.com/vapor/fluent-sqlite-driver.git",
+        "package": "fluent-mongo-driver",
+        "repositoryURL": "https://github.com/vapor/fluent-mongo-driver.git",
         "state": {
           "branch": null,
-          "revision": "6f29f6f182c812075f09c7575c18ac5535c26824",
-          "version": "4.0.1"
+          "revision": "ce519013f51439773fe668d6575888665b0e2dda",
+          "version": "1.0.2"
+        }
+      },
+      {
+        "package": "MongoKitten",
+        "repositoryURL": "https://github.com/OpenKitten/MongoKitten.git",
+        "state": {
+          "branch": null,
+          "revision": "a1877877ff173461e6168f57fbf6603628bfbf91",
+          "version": "6.6.4"
+        }
+      },
+      {
+        "package": "DNSClient",
+        "repositoryURL": "https://github.com/OpenKitten/NioDNS.git",
+        "state": {
+          "branch": null,
+          "revision": "7517b774d48833f04869fcde668d2f338fadc464",
+          "version": "2.0.6"
         }
       },
       {
@@ -71,24 +98,6 @@
           "branch": null,
           "revision": "ea9928b7f4a801b175a00b982034d9c54ecb6167",
           "version": "3.7.0"
-        }
-      },
-      {
-        "package": "sqlite-kit",
-        "repositoryURL": "https://github.com/vapor/sqlite-kit.git",
-        "state": {
-          "branch": null,
-          "revision": "2ec279b9c845cec254646834b66338551a024561",
-          "version": "4.0.2"
-        }
-      },
-      {
-        "package": "sqlite-nio",
-        "repositoryURL": "https://github.com/vapor/sqlite-nio.git",
-        "state": {
-          "branch": null,
-          "revision": "6481dd0b01112d082dd7eb362782126e81964138",
-          "version": "1.1.0"
         }
       },
       {

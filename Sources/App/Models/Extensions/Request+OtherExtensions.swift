@@ -21,7 +21,7 @@ extension Request {
         _ type: T.Type,
         beforeDeleteCallback: @escaping ([T]) -> Void = { _ in }) -> EventLoopFuture<Void>
     {
-        return T.query(on: self.db).all()
+        return T.query(on: db).all()
             .flatMap { results -> EventLoopFuture<Void> in // delete
                 beforeDeleteCallback(results)
                 return results.delete(on: self)

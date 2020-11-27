@@ -1,5 +1,5 @@
 //
-//  FeatureFlags.swift
+//  Configurations.swift
 //  App
 //
 //  Created by Jing Wei Li on 7/26/20.
@@ -8,15 +8,22 @@
 import Foundation
 import Vapor
 
-class FeatureFlags: Codable {
-    static let `default`: FeatureFlags = .load()
+class Configurations: Codable {
+    static let `default`: Configurations = .load()
     
     let unrestrictedCORS: Bool
+    let mongoURL: String
     
-    private class func load() -> FeatureFlags {
+    required public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        unrestrictedCORS = try container.decode(Bool.self, forKey: .unrestrictedCORS)
+        mongoURL = try container.decode(String.self, forKey: .mongoURL).base64Decoded()
+    }
+    
+    private class func load() -> Configurations {
         do {
-            let file = try readFileNamed("FeatureFlags.json", directory: .root)
-            return try JSONDecoder().decode(FeatureFlags.self, from: file)
+            let file = try readFileNamed("Configurations.json", directory: .root)
+            return try JSONDecoder().decode(Configurations.self, from: file)
         } catch let error {
             fatalError(error.localizedDescription)
         }
@@ -24,7 +31,7 @@ class FeatureFlags: Codable {
 }
 
 
-extension FeatureFlags {
+extension Configurations {
     func configureMiddlewaresFrom(app: Application) {
         if unrestrictedCORS {
             app.middleware.use(CORSMiddleware(configuration: CORSMiddleware.Configuration(

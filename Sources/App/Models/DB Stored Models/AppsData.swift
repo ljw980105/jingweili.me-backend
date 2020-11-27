@@ -38,8 +38,8 @@ extension AppsData: Migratable {
     
     static var fields: [FieldForMigratable] {
         return [
-            .init("apps", .array(of: .dictionary(of: .dictionary))),
-            .init("skills", .array(of: .dictionary(of: .dictionary)))
+            .init("apps", .array(of: .dictionary)),
+            .init("skills", .array(of: .dictionary))
         ]
     }
     

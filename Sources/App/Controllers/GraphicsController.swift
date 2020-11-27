@@ -15,7 +15,7 @@ struct GraphicsController: RouteCollection {
             return GraphicProject.query(on: req.db).all()
         }
         
-        routes.get("api", "get-graphic-projects/simplified") { req -> EventLoopFuture<[NameAndURL]> in
+        routes.get("api", "get-graphic-projects", "simplified") { req -> EventLoopFuture<[NameAndURL]> in
             return GraphicProject.query(on: req.db).all()
                 .flatMapThrowing { projects -> [GraphicProject] in
                     if let limit = req.query[Int.self, at: "limit"] {
@@ -37,18 +37,15 @@ struct GraphicsController: RouteCollection {
                 .transform(to: ServerResponse.defaultSuccess)
         }
         
-        routes.delete("api", "delete-graphic-project") { req -> EventLoopFuture<ServerResponse> in
+        routes.delete("api", "delete-graphic-project", ":id") { req -> EventLoopFuture<ServerResponse> in
             try req.authenticate()
-            guard let id = req.parameters.get("id") as? UUID else {
-                throw Abort(.internalServerError)
+            guard let id = req.parameters.get("id", as: UUID.self) else {
+                throw Abort(.badRequest)
             }
             return GraphicProject.find(id, on: req.db)
                 .unwrap(or: Abort(.notFound))
-                .flatMap { project in
-                    project
-                        .delete(on: req.db)
-                        .transform(to: ServerResponse.defaultSuccess)
-                }
+                .flatMap { $0.delete(on: req.db) }
+                .transform(to: ServerResponse.defaultSuccess)
         }
         
         routes.post("api", "multiple-graphics-projects") { req -> EventLoopFuture<ServerResponse> in

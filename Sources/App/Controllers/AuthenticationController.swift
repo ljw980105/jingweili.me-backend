@@ -36,6 +36,7 @@ struct AuthenticationController: RouteCollection {
         }
         
         routes.get("api", "logout") { req -> EventLoopFuture<ServerResponse> in
+            try req.authenticate()
             try deleteFileNamed("currentToken", at: .root)
             return req.eventLoop.future(ServerResponse.defaultSuccess)
         }

@@ -8,7 +8,6 @@
 import Foundation
 import Vapor
 import Fluent
-import FluentSQLiteDriver
 
 final class PCSetupEntry: Codable, Model {
     @ID
@@ -40,20 +39,3 @@ extension PCSetupEntry: Migratable {
         return "PCSetupEntry"
     }
 }
-
-class PCSetupEntryMigrator: Migration {
-    func prepare(on database: Database) -> EventLoopFuture<Void> {
-        database.schema("PCSetupEntry")
-            .id()
-            .field("partName", .string, .required)
-            .field("partDetail", .string, .required)
-            .field("partPurchaseLink", .string, .required)
-            .create()
-    }
-    
-    func revert(on database: Database) -> EventLoopFuture<Void> {
-        database.schema("PCSetupEntry").delete()
-    }
-}
-
-

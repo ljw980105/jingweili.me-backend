@@ -13,6 +13,8 @@ enum FileType: String {
     case resume = "resume.pdf"
     
     func fileExists() -> Bool {
-        return FileManager.default.fileExists(atPath: "\(pwd())Public/resources/\(rawValue)")
+        return FileManager.default.fileExists(
+            atPath: Directory.public.directory.appendingPathComponent(rawValue).relativePath
+        )
     }
 }
