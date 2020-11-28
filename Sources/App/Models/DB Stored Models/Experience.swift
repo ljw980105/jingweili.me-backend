@@ -7,24 +7,42 @@
 
 import Foundation
 import Vapor
-import FluentSQLite
+import Fluent
 
-final class Experience: Codable {
-    var id: Int?
-    let imageLink: String
-    let position: String
-    let time: String
-    let company: String
-    let accomplishments: [String]
-    let special: String?
+final class Experience: Codable, Model, Content {
+    @ID
+    var id: UUID?
+    @Field(key: "imageLink")
+    var imageLink: String
+    @Field(key: "position")
+    var position: String
+    @Field(key: "time")
+    var time: String
+    @Field(key: "company")
+    var company: String
+    @Field(key: "accomplishments")
+    var accomplishments: [String]
+    @Field(key: "special")
+    var special: String?
 }
 
-extension Experience: Model {
-    typealias Database = SQLiteDatabase
-    typealias ID = Int
-    public static var idKey: IDKey = \Experience.id
-}
-
-extension Experience: Content, Migration, Parameter {
+extension Experience: Migratable {
+    static var schema: String {
+        return "Experience"
+    }
     
+    static var fields: [FieldForMigratable] {
+        return [
+            .init("imageLink", .string),
+            .init("position", .string),
+            .init("time", .string),
+            .init("company", .string),
+            .init("accomplishments", .array(of: .string)),
+            .init("special", .string, false)
+        ]
+    }
+    
+    static var idRequired: Bool {
+        return true
+    }
 }

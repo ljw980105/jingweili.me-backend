@@ -7,20 +7,30 @@
 
 import Foundation
 import Vapor
-import FluentSQLite
+import Fluent
 
-final class AboutInfo: Codable {
-    var id: Int?
-    let content: String
-    let imageUrl: String
+final class AboutInfo: Codable, Model, Content {
+    @ID
+    var id: UUID?
+    @Field(key: "content")
+    var content: String
+    @Field(key: "imageUrl")
+    var imageUrl: String
 }
 
-extension AboutInfo: Model {
-    typealias Database = SQLiteDatabase
-    typealias ID = Int
-    public static var idKey: IDKey = \AboutInfo.id
-}
-
-extension AboutInfo: Content, Migration, Parameter {
+extension AboutInfo: Migratable {
+    static var idRequired: Bool {
+        return true
+    }
     
+    static var schema: String {
+        return "AboutInfo"
+    }
+    
+    static var fields: [FieldForMigratable] {
+        return [
+            .init("content", .string),
+            .init("imageUrl", .string)
+        ]
+    }
 }

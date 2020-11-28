@@ -10,9 +10,9 @@ import Vapor
 import Fluent
 
 struct AppsController: RouteCollection {
-    func boot(router: Router) throws {
+    func boot(routes: RoutesBuilder) throws {
         // MARK: - Apps: General
-        router.post("api", "apps") { req -> Future<ServerResponse> in
+        routes.post("api", "apps") { req -> EventLoopFuture<ServerResponse> in
             try req.authenticate()
             return req
                 .deleteAllOnType(AppsData.self, beforeDeleteCallback: { appsData in
@@ -21,40 +21,33 @@ struct AppsController: RouteCollection {
                             .forEach { try? deleteFileNamed($0.imageLink, at: .public)}
                     }
                 })
-                .flatMap { _ -> Future<AppsData> in // save
-                    return try req.content
-                        .decode(AppsData.self)
-                        .flatMap { $0.save(on: req) }
+                .flatMapThrowing { _ -> EventLoopFuture<Void> in // save
+                    let appData = try req.content.decode(AppsData.self)
+                    return appData.save(on: req.db)
                 }
-                .transform(to: req.future(ServerResponse.defaultSuccess))
+                .transform(to: req.eventLoop.future(ServerResponse.defaultSuccess))
         }
         
-        router.get("api", "apps") { req -> Future<AppsData> in
-            return AppsData.query(on: req).all()
-                .map { apps -> AppsData in
-                    guard let first = apps.first else {
-                        throw NSError(domain: "No Apps Data Exist", code: 0)
-                    }
-                    return first
-                }
+        routes.get("api", "apps") { req -> EventLoopFuture<AppsData> in
+            return AppsData
+                .query(on: req.db)
+                .first()
+                .unwrap(orError: NSError(domain: "No Apps Data Exist", code: 0))
         }
         
         // MARK: - Beatslytics
-        router.post("api", "apps", "beatslytics") { req -> Future<ServerResponse> in
+        routes.post("api", "apps", "beatslytics") { req -> EventLoopFuture<ServerResponse> in
             try req.authenticate()
             return req
                 .deleteAllOnType(BeatslyticsData.self)
                 .decodeAndSaveOnType(BeatslyticsData.self, req: req)
         }
         
-        router.get("api", "apps", "beatslytics") { req -> Future<BeatslyticsData> in
-            return BeatslyticsData.query(on: req).all()
-                .map { apps -> BeatslyticsData in
-                    guard let first = apps.first else {
-                        throw NSError(domain: "No BeatslyticsData Exist", code: 0)
-                    }
-                    return first
-                }
+        routes.get("api", "apps", "beatslytics") { req -> EventLoopFuture<BeatslyticsData> in
+            return BeatslyticsData
+                .query(on: req.db)
+                .first()
+                .unwrap(orError: NSError(domain: "No BeatslyticsData Exist", code: 0))
         }
     }
 }

@@ -10,10 +10,10 @@ import Vapor
 import Fluent
 
 struct MiscController: RouteCollection {
-    func boot(router: Router) throws {
+    func boot(routes: RoutesBuilder) throws {
         // MARK: - File Manipulation
         
-        router.get("api", "browse-files") { req -> Future<[FileToBrowse]> in
+        routes.get("api", "browse-files") { req -> EventLoopFuture<[FileToBrowse]> in
             try req.authenticate()
             let directoryType = try req.directoryType()
             let fm = FileManager.default
@@ -24,38 +24,36 @@ struct MiscController: RouteCollection {
                 .filterMultipleElements(
                     using: { !$0.absoluteString.contains($1) },
                     elements: [".gitkeep", ".gitignore"])
-            return req.future(try items.map(FileToBrowse.init))
+            return req.eventLoop.future(try items.map(FileToBrowse.init))
         }
         
-        router.post("api", "upload-file") { req -> Future<ServerResponse> in
+        routes.post("api", "upload-file") { req -> EventLoopFuture<ServerResponse> in
             try req.authenticate()
             let directoryType = try req.directoryType()
             return try saveWithOriginalFilename(on: req, directory: directoryType)
         }
         
-        router.post("api", "delete-files") { req -> Future<ServerResponse> in
+        routes.post("api", "delete-files") { req -> EventLoopFuture<ServerResponse> in
             try req.authenticate()
             let directoryType = try req.directoryType()
-            return try req.content
-                .decode(FileToBrowse.self)
-                .flatMap { file -> Future<ServerResponse> in
-                    try deleteFileNamed(file.name, at: directoryType)
-                    return req.future(ServerResponse.defaultSuccess)
-                }
+            let file = try req.content.decode(FileToBrowse.self)
+            try deleteFileNamed(file.name, at: directoryType)
+            return req.eventLoop.future(ServerResponse.defaultSuccess)
         }
         
-        router.get("api", "directory-info") { req -> Future<DirectoryInfo> in
+        routes.get("api", "directory-info") { req -> EventLoopFuture<DirectoryInfo> in
             try req.authenticate()
             let directoryType = try req.directoryType()
             let info = try DirectoryInfo(url: directoryType.directory)
-            return req.future(info)
+            return req.eventLoop.future(info)
         }
         
-        router.get("api", "stream-file") { req -> Future<Response> in
+        routes.get("api", "stream-file") { req -> EventLoopFuture<Response> in
             try req.authenticate()
             let directoryType = try req.directoryType()
             let name = try req.queryParam(named: "name", type: String.self)
-            return try req.streamFile(at: directoryType.directory.appendingPathComponent(name).relativePath)
+            let file = req.fileio.streamFile(at: directoryType.directory.appendingPathComponent(name).relativePath)
+            return req.eventLoop.future(file)
         }
     }
 }

@@ -1,43 +1,39 @@
-import FluentSQLite
+import Fluent
+import FluentMongoDriver
 import Vapor
 
 /// Called before your application initializes.
-public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
-    // Register providers first
-    try services.register(FluentSQLiteProvider())
-
-    // Register routes to the router
-    let router = EngineRouter.default()
-    try routes(router)
-    services.register(router, as: Router.self)
-
+public func configure(_ app: Application) throws {
     // Register middleware
-    var middlewares = MiddlewareConfig() // Create _empty_ middleware config
-    middlewares.use(FileMiddleware.self) // Serves files from `Public/` directory
-    middlewares.use(ErrorMiddleware.self) // Catches errors and converts to HTTP response
-    FeatureFlags.default.configureMiddlewareFrom(config: &middlewares)
-    services.register(middlewares)
+    app.middleware.use(ErrorMiddleware.default(environment: app.environment))
+    app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
+    Configurations.default.configureMiddlewaresFrom(app: app)
 
-    // Configure a SQLite database
-    let sqlite = try SQLiteDatabase(storage: .file(path: "db.sqlite"))
-//    let sqlite = try SQLiteDatabase(storage: .memory)
-
-    // Register the configured SQLite database to the database config.
-    var databases = DatabasesConfig()
-    databases.add(database: sqlite, as: .sqlite)
-    services.register(databases)
+    // Configure MongoDB
+    //app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
+    try app.databases.use(.mongo(connectionString: Configurations.default.mongoURL), as: .mongo)
 
     // Configure migrations
-    var migrations = MigrationConfig()
-    migrations.add(model: PCSetupEntry.self, database: .sqlite)
-    migrations.add(model: GraphicProject.self, database: .sqlite)
-    migrations.add(model: AboutInfo.self, database: .sqlite)
-    migrations.add(model: Project.self, database: .sqlite)
-    migrations.add(model: Experience.self, database: .sqlite)
-    migrations.add(model: ResumeData.self, database: .sqlite)
-    migrations.add(model: AppsData.self, database: .sqlite)
-    migrations.add(model: BeatslyticsData.self, database: .sqlite)
-    services.register(migrations)
-    // set the max allowed request size
-    services.register(NIOServerConfig.default(maxBodySize: 100_000_000))
+    let migratables: [Migratable.Type] = [
+        AboutInfo.self,
+        BeatslyticsData.self,
+        PCSetupEntry.self,
+        Experience.self,
+        AppsData.self,
+        GraphicProject.self,
+        Project.self,
+        ResumeData.self
+    ]
+    
+    migratables.forEach { migratable in
+        app.migrations.add(migratable.createMigration())
+    }
+    
+    app.logger.logLevel = .error
+    
+    PWDWrapper.setPWD(with: app)
+    
+    app.routes.defaultMaxBodySize = "50mb"
+    
+    try routes(app)
 }

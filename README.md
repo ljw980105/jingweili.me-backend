@@ -4,14 +4,15 @@
 
 Backend server code for the frontend website [jingweili.me](https://jingweili.me), whose repository is [here](https://github.com/ljw980105/jingweili.me).
 
-This project utilizes [Vapor](https://github.com/vapor/vapor) 3, a library for server-side Swift.
+This project utilizes [Vapor](https://github.com/vapor/vapor) 4, a library for server-side Swift.
 
-## Feature Flags
-To run the vapor project you must supply a json file named `FeatureFlags.json` to the root directory to configure the server:
+## Configurations
+To run the vapor project you must supply a json file named `Configurations.json` to the root directory to configure the server:
 
 ```json
 {
-    "unrestrictedCORS": Bool
+    "unrestrictedCORS": Bool,
+    "mongoURL": string // base64 encoded
 }
 ```
 

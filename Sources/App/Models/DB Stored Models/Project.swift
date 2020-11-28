@@ -7,15 +7,21 @@
 
 import Foundation
 import Vapor
-import FluentSQLite
+import Fluent
 
-final class Project: Codable {
-    var id: Int?
-    let imageUrl: String
-    let name: String
-    let description: String
-    let links: [ProjectLink]
-    let technologies: [String]
+final class Project: Codable, Content, Model {
+    @ID
+    var id: UUID?
+    @Field(key: "imageUrl")
+    var imageUrl: String
+    @Field(key: "name")
+    var name: String
+    @Field(key: "description")
+    var description: String
+    @Field(key: "links")
+    var links: [ProjectLink]
+    @Field(key: "technologies")
+    var technologies: [String]
 }
 
 final class ProjectLink: Content {
@@ -23,13 +29,23 @@ final class ProjectLink: Content {
     let url: URL
 }
 
-extension Project: Model {
-    typealias Database = SQLiteDatabase
-    typealias ID = Int
-    public static var idKey: IDKey = \Project.id
-}
-
-extension Project: Content, Migration, Parameter {
+extension Project: Migratable {
+    static var schema: String {
+        return "Project"
+    }
     
+    static var fields: [FieldForMigratable] {
+        return [
+            .init("imageUrl", .string),
+            .init("name", .string),
+            .init("description", .string),
+            .init("links", .array(of: .dictionary)),
+            .init("technologies", .array(of: .string))
+        ]
+    }
+    
+    static var idRequired: Bool {
+        return true
+    }
 }
 

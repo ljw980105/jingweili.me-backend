@@ -7,12 +7,15 @@
 
 import Foundation
 import Vapor
-import FluentSQLite
+import Fluent
 
-final class AppsData: Codable {
-    var id: Int?
-    let apps: [AppsOrSkill]
-    let skills: [AppsOrSkill]
+final class AppsData: Codable, Model, Content {
+    @ID
+    var id: UUID?
+    @Field(key: "apps")
+    var apps: [AppsOrSkill]
+    @Field(key: "skills")
+    var skills: [AppsOrSkill]
 }
 
 final class AppsOrSkill: Content {
@@ -24,13 +27,20 @@ final class AppsOrSkill: Content {
     let link: String?
 }
 
-extension AppsData: Model {
-    typealias Database = SQLiteDatabase
-    typealias ID = Int
-    public static var idKey: IDKey = \AppsData.id
-}
-
-extension AppsData: Content, Migration, Parameter {
+extension AppsData: Migratable {
+    static var idRequired: Bool {
+        return true
+    }
     
+    static var fields: [FieldForMigratable] {
+        return [
+            .init("apps", .array(of: .dictionary)),
+            .init("skills", .array(of: .dictionary))
+        ]
+    }
+    
+    static var schema: String {
+        return "AppsData"
+    }
 }
 

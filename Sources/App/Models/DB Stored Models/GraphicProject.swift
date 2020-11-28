@@ -7,26 +7,41 @@
 
 import Foundation
 import Vapor
-import FluentSQLite
+import Fluent
 
-final class GraphicProject: Codable {
-    var id: Int?
-    let name: String
-    let description: String
-    let imageURLRectangle: String
-    let imageURLSquare: String
-    let projectURL: String
+final class GraphicProject: Codable, Model, Content {
+    @ID
+    var id: UUID?
+    @Field(key: "name")
+    var name: String
+    @Field(key: "description")
+    var description: String
+    @Field(key: "imageURLRectangle")
+    var imageURLRectangle: String
+    @Field(key: "imageURLSquare")
+    var imageURLSquare: String
+    @Field(key: "projectURL")
+    var projectURL: String
 }
 
-extension GraphicProject: Model {
-    typealias Database = SQLiteDatabase
-    typealias ID = Int
-    public static var idKey: IDKey = \GraphicProject.id
+extension GraphicProject: Migratable {
+    static var schema: String {
+        return "GraphicProject"
+    }
+    
+    static var fields: [FieldForMigratable] {
+        return [
+            .init("name", .string),
+            .init("description", .string),
+            .init("imageURLRectangle", .string),
+            .init("imageURLSquare", .string),
+            .init("projectURL", .string),
+        ]
+    }
+    
+    static var idRequired: Bool {
+        return true
+    }
 }
 
-extension GraphicProject: Content {}
-
-extension GraphicProject: Migration {}
-
-extension GraphicProject: Parameter {}
 

@@ -7,19 +7,15 @@
 
 import Foundation
 import Vapor
-import FluentSQLite
+import Fluent
 
 extension Array where Element: Model {
     /// Saves an array of elements to the database.
-    func save(on request: Request) -> Future<[Element]> {
-        return self
-            .map { $0.create(on: request) }
-            .flatten(on: request)
+    func save(on request: Request) -> EventLoopFuture<Void> {
+        return request.eventLoop.flatten(map { $0.create(on: request.db) })
     }
     
-    func delete(on request: Request) -> Future<Void> {
-        return self
-            .map { $0.delete(on: request) }
-            .flatten(on: request)
+    func delete(on request: Request) -> EventLoopFuture<Void> {
+        return request.eventLoop.flatten(map { $0.delete(on: request.db) })
     }
 }

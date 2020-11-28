@@ -7,18 +7,27 @@
 
 import Foundation
 import Vapor
-import FluentSQLite
+import Fluent
 
-final class ResumeData: Codable {
-    var id: Int?
-    let appsWorkedOn: Int
-    let commercialAppsWorkedOn: Int
-    let appsPublished: Int
-    let iosSkills: [GenericFeature]
-    let webSkillsFrontend: [TextAndImage];
-    let webSkillsBackend: [TextAndImage];
-    let webSkillsGeneral: [TextAndImage];
-    let graphicSkills: [GenericFeature];
+final class ResumeData: Codable, Content, Model {
+    @ID
+    var id: UUID?
+    @Field(key: "appsWorkedOn")
+    var appsWorkedOn: Int
+    @Field(key: "commercialAppsWorkedOn")
+    var commercialAppsWorkedOn: Int
+    @Field(key: "appsPublished")
+    var appsPublished: Int
+    @Field(key: "iosSkills")
+    var iosSkills: [GenericFeature]
+    @Field(key: "webSkillsFrontend")
+    var webSkillsFrontend: [TextAndImage]
+    @Field(key: "webSkillsBackend")
+    var webSkillsBackend: [TextAndImage]
+    @Field(key: "webSkillsGeneral")
+    var webSkillsGeneral: [TextAndImage]
+    @Field(key: "graphicSkills")
+    var graphicSkills: [GenericFeature]
 }
 
 final class GenericFeature: Content {
@@ -31,13 +40,25 @@ final class TextAndImage: Content {
     let text: String
 }
 
-extension ResumeData: Model {
-    typealias Database = SQLiteDatabase
-    typealias ID = Int
-    public static var idKey: IDKey = \ResumeData.id
-}
-
-extension ResumeData: Content, Migration, Parameter {
+extension ResumeData: Migratable {
+    static var idRequired: Bool {
+        return true
+    }
     
+    static var schema: String {
+        return "ResumeData"
+    }
+    
+    static var fields: [FieldForMigratable] {
+        return [
+            .init("appsWorkedOn", .int),
+            .init("commercialAppsWorkedOn", .int),
+            .init("appsPublished", .int),
+            .init("iosSkills", .array(of: .dictionary)),
+            .init("webSkillsFrontend", .array(of: .dictionary)),
+            .init("webSkillsBackend", .array(of: .dictionary)),
+            .init("webSkillsGeneral", .array(of: .dictionary)),
+            .init("graphicSkills", .array(of: .dictionary)),
+        ]
+    }
 }
-

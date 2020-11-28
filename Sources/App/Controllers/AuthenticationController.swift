@@ -21,25 +21,24 @@ import Fluent
 /// 5. When the user logs out, the locally stored `currentToken` is deleted
 /// * Note: This is not using JWTs because they do not support manual logout by invalidating a token
 struct AuthenticationController: RouteCollection {
-    func boot(router: Router) throws {
+    func boot(routes: RoutesBuilder) throws {
         // MARK: - Login / Logout
-        router.post("api", "login") { req -> Future<Token> in
-            return try req.content
-                .decode(Password.self)
-                .flatMap { passwordObj -> Future<Token> in
-                    let password = try readStringFromFile(named: "password", directory: .root).base64Decoded()
-                    guard password == passwordObj.password else {
-                        throw Abort(.unauthorized)
-                    }
-                    let token = String(randomWithLength: 20)
-                    try token.saveToFileNamed("currentToken", at: .root)
-                    return req.future(Token(token: token))
-                }
+        routes.post("api", "login") { req -> EventLoopFuture<Token> in
+            let passwordObj = try req.content.decode(Password.self)
+            let password = try readStringFromFile(named: "password", directory: .root).base64Decoded()
+            guard password == passwordObj.password else {
+                throw Abort(.unauthorized)
+            }
+            let token = String(randomWithLength: 20)
+            try token.saveToFileNamed("currentToken", at: .root)
+            return req.eventLoop.future(Token(token: token))
+            
         }
         
-        router.get("api", "logout") { req -> Future<ServerResponse> in
+        routes.get("api", "logout") { req -> EventLoopFuture<ServerResponse> in
+            try req.authenticate()
             try deleteFileNamed("currentToken", at: .root)
-            return req.future(ServerResponse.defaultSuccess)
+            return req.eventLoop.future(ServerResponse.defaultSuccess)
         }
     }
 }
