@@ -24,6 +24,8 @@ final class Experience: Codable, Model, Content {
     var accomplishments: [String]
     @Field(key: "special")
     var special: String?
+    @Field(key: "order")
+    var order: Int
 }
 
 extension Experience: Migratable {
@@ -38,7 +40,8 @@ extension Experience: Migratable {
             .init("time", .string),
             .init("company", .string),
             .init("accomplishments", .array(of: .string)),
-            .init("special", .string, false)
+            .init("special", .string, false),
+            .init("order", .int)
         ]
     }
     
