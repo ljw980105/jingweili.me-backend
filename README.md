@@ -24,6 +24,7 @@ disown %1
 ```
 
 ### Foundation APIs that does not work on Linux
+* Note: the APIs below seem to work fine in Vapor 4 and Swift 5.2, but issues still persist on Vapor 3 
 * `URL`
     * `func resourceValues(forKeys keys: Set<URLResourceKey>) throws -> URLResourceValues`
 * `FileManager`
