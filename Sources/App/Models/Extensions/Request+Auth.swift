@@ -10,11 +10,11 @@ import Vapor
 
 extension Request {
     func authenticate() throws {
-        guard let bearerToken = headers.first(name: "Authorization") else {
+        guard let bearerToken = headers.bearerAuthorization?.token else {
             throw Abort(.unauthorized)
         }
         let currentToken = try readStringFromFile(named: "currentToken", directory: .root)
-        guard currentToken == bearerToken.replacingOccurrences(of: "Bearer ", with: "") else {
+        guard currentToken == bearerToken else {
             throw Abort(.unauthorized)
         }
     }
