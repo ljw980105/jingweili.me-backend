@@ -57,12 +57,7 @@ struct ResumeController: RouteCollection {
         
         routes.post("api", "resume-data") { req -> EventLoopFuture<ServerResponse> in
             try req.authenticate()
-            return req.deleteAllOnType(ResumeData.self, beforeDeleteCallback: { data in
-                    data.forEach { data in
-                        let webskills = data.webSkillsFrontend + data.webSkillsBackend + data.webSkillsGeneral
-                        webskills.forEach { try? deleteFileNamed($0.imageUrl, at: .public) }
-                    }
-                })
+            return req.deleteAllOnType(ResumeData.self)
                 .flatMapThrowing { _ -> EventLoopFuture<Void> in
                     let resumeData = try req.content.decode(ResumeData.self)
                     return resumeData.save(on: req.db)

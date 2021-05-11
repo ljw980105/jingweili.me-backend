@@ -15,12 +15,7 @@ struct AppsController: RouteCollection {
         routes.post("api", "apps") { req -> EventLoopFuture<ServerResponse> in
             try req.authenticate()
             return req
-                .deleteAllOnType(AppsData.self, beforeDeleteCallback: { appsData in
-                    appsData.forEach { appsDatum in
-                        (appsDatum.apps + appsDatum.skills)
-                            .forEach { try? deleteFileNamed($0.imageLink, at: .public)}
-                    }
-                })
+                .deleteAllOnType(AppsData.self)
                 .flatMapThrowing { _ -> EventLoopFuture<Void> in // save
                     let appData = try req.content.decode(AppsData.self)
                     return appData.save(on: req.db)
