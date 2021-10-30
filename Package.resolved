@@ -74,6 +74,15 @@
         }
       },
       {
+        "package": "multipart-kit",
+        "repositoryURL": "https://github.com/vapor/multipart-kit.git",
+        "state": {
+          "branch": null,
+          "revision": "2dd9368a3c9580792b77c7ef364f3735909d9996",
+          "version": "4.5.1"
+        }
+      },
+      {
         "package": "DNSClient",
         "repositoryURL": "https://github.com/OpenKitten/NioDNS.git",
         "state": {
@@ -141,8 +150,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "2f9ea477387806a79a8951524ef2d40de917a0e1",
-          "version": "2.24.0"
+          "revision": "6aa9347d9bc5bbfe6a84983aec955c17ffea96ef",
+          "version": "2.33.0"
         }
       },
       {
@@ -186,8 +195,8 @@
         "repositoryURL": "https://github.com/vapor/vapor.git",
         "state": {
           "branch": null,
-          "revision": "b040f90b80ac5906fcf1476a46d360c159f01892",
-          "version": "4.35.0"
+          "revision": "d733fb10c513f8d8b38eb4df55392736d4179198",
+          "version": "4.50.0"
         }
       },
       {
