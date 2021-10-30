@@ -11,7 +11,7 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build
+    - name: build
       run: |
         swift build
         swift test
@@ -24,7 +24,7 @@ jobs:
       - name: build has succceeded
         uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_CHANNEL: dev-build
+          SLACK_CHANNEL: dev-builds
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_COLOR: '#FFA500'
           SLACK_ICON: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
@@ -39,7 +39,7 @@ jobs:
       - name: build has failed
         uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_CHANNEL: dev-build
+          SLACK_CHANNEL: dev-builds
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_COLOR: '#FF0000'
           SLACK_ICON: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
