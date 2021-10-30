@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/ljw980105/jingweili.me-backend.svg?branch=master)](https://travis-ci.org/ljw980105/jingweili.me-backend)
+[![Build](https://github.com/ljw980105/jingweili.me-backend/workflows/Build/badge.svg)](https://github.com/ljw980105/jingweili.me-backend/actions)
 
 # [jingweili.me](https://jingweili.me) Backend
 
