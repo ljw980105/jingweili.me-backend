@@ -1,4 +1,4 @@
-[![Build](https://github.com/ljw980105/jingweili.me-backend/workflows/Build/badge.svg)](https://github.com/ljw980105/jingweili.me-backend/actions)
+[![Build](https://github.com/ljw980105/jingweili.me-backend/workflows/build/badge.svg)](https://github.com/ljw980105/jingweili.me-backend/actions)
 
 # [jingweili.me](https://jingweili.me) Backend
 

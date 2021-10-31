@@ -5,7 +5,7 @@ import Vapor
 /// Called before your application initializes.
 public func configure(_ app: Application) throws {
     // Register middleware
-    app.middleware.use(ErrorMiddleware.default(environment: app.environment))
+    app.middleware.use(ErrorMiddleware.customErrorMiddleware(environment: app.environment))
     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
     Configurations.default.configureMiddlewaresFrom(app: app)
 
