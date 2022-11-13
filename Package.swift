@@ -8,9 +8,9 @@ let package = Package(
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.50.0"),
-        .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
-        .package(url: "https://github.com/vapor/fluent-mongo-driver.git", from: "1.0.0")
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.67.2"),
+        .package(url: "https://github.com/vapor/fluent.git", from: "4.5.0"),
+        .package(url: "https://github.com/vapor/fluent-mongo-driver.git", from: "1.1.2")
     ],
     targets: [
         .target(name: "App", dependencies: [
