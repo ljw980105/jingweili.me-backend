@@ -55,6 +55,25 @@ struct MiscController: RouteCollection {
             let file = req.fileio.streamFile(at: directoryType.directory.appendingPathComponent(name).relativePath)
             return req.eventLoop.future(file)
         }
+        
+        // MARK: - Drinks
+        let drinksRoute = routes.grouped("api", "drinks")
+        drinksRoute.post { req -> EventLoopFuture<ServerResponse> in
+            try req.authenticate()
+            return req.deleteAllOnType(Drinks.self)
+                .flatMapThrowing { _ -> EventLoopFuture<Void> in // save
+                    let drinks = try req.content.decode(Drinks.self)
+                    return drinks.save(on: req.db)
+                }
+                .transform(to: req.eventLoop.future(ServerResponse.defaultSuccess))
+        }
+        
+        drinksRoute.get { req -> EventLoopFuture<Drinks> in
+            Drinks
+                .query(on: req.db)
+                .first()
+                .unwrap(or: NSError(domain: "Unable to find drinks", code: 0))
+        }
     }
 }
 

@@ -22,7 +22,8 @@ public func configure(_ app: Application) throws {
         AppsData.self,
         GraphicProject.self,
         Project.self,
-        ResumeData.self
+        ResumeData.self,
+        Drinks.self
     ]
     
     migratables.forEach { migratable in
